@@ -13,6 +13,7 @@
 #include "ast_type_specifier.hpp"
 #include "ast_constant.hpp"
 #include "ast_context.hpp"
+#include "ast_variable_declarator.hpp"
 
 extern Node *ParseAST(std::string file_name);
 
