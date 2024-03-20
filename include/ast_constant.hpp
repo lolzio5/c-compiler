@@ -1,7 +1,7 @@
 #ifndef AST_CONSTANT_HPP
 #define AST_CONSTANT_HPP
 
-#include "ast_node.hpp"
+#include "node.hpp"
 
 class IntConstant : public Node
 {
