@@ -35,7 +35,7 @@ void Compile(Node *root, CommandLineArguments &args)
 
     std::cout << "Compiling parsed AST..." << std::endl;
     std::ofstream output(args.compile_output_path, std::ios::trunc);
-    root->EmitRISC(output, ctx);
+    root->EmitRISC(output, ctx, 10);  // Output to register a0 (register with index 10)
     output.close();
     std::cout << "Compiled to: " << args.compile_output_path << std::endl;
 }

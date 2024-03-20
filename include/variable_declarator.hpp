@@ -21,12 +21,14 @@ public:
         }
     }
 
-    void EmitRISC(std::ostream &stream, Context &context) const{
-        branches[0]->EmitRISC(stream, context);
-        branches[1]->EmitRISC(stream, context);
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const{
+        branches[0]->EmitRISC(stream, context, destReg);
+        branches[1]->EmitRISC(stream, context, destReg);
     }
     void Print(std::ostream &stream) const {
-        stream<<"Assign Variable"<<std::endl;
+        branches[0]->Print(stream);
+        stream<<" = "<<std::endl;
+        branches[1]->Print(stream);
     }
 };
 

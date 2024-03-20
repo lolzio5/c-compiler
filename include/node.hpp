@@ -18,7 +18,7 @@ public:
             delete branch;
         }
     }
-    virtual void EmitRISC(std::ostream &stream, Context &context) const = 0;
+    virtual void EmitRISC(std::ostream &stream, Context &context, int destReg) const = 0;
     virtual void Print(std::ostream &stream) const = 0;
 };
 
@@ -43,12 +43,12 @@ public:
         nodes.push_back(item);
     }
 
-    virtual void EmitRISC(std::ostream &stream, Context &context) const {
+    virtual void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
         for (auto node : nodes){
             if (node == nullptr){
                 continue;
             }
-            node->EmitRISC(stream, context);
+            node->EmitRISC(stream, context, destReg);
         }
     }
 

@@ -10,19 +10,20 @@
 class Context
 {
 private:
-    std::map<std::string, int> variables; // Bindings for name and stack location
+    std::map<std::string, int> variables; // Variabl name binding to stack location
 
     int usedRegisters[32] = {
-        1, //x0 zero address: index = 0
-        1, //x1 ra return address: index = 1
-        1,  //x2 sp stack pointer: index = 2
-        1,  //x3 gp global pointer: index = 3
-        1, // Thread pointer: index = 4
-        0, 0, 0,  //t0-t2 Temporary registers: index = 5-7
-        1, 1,  //s0-s1 saved registers: index = 8-9
-        0, 0, 0, 0, 0, 0, 0, 0, //a0-a7 Argument registers: index = 10-17
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, //s2-s11 saved registers: index = 18-27
-        0, 0, 0, 0, //t3-t6 Temporary registers: index = 28-31
+        1, //x0 i = 0, reg zero
+        1, //x1 i = 1, return address ra
+        1,  //x2 i = 2, stack pointer sp
+        1,  //x3 i = 3, global pointer gp
+        1, //x4 i = 4, thread pointer tp
+        0, 0, 0,  //t0-t2 i= 5-7, temporary registers
+        1, 1,  //s0-s1 i = 8-9, saved registers
+        1, //a0 i=10, return result
+        0, 0, 0, 0, 0, 0, 0, //a1-a7 i = 11-17, argument registers
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, //s2-s11 i = 18-27, saved registers
+        0, 0, 0, 0, //t3-t6 i = 28-31, temporary registers
     };
 
     int currentStackLocation;

@@ -59,7 +59,7 @@ translation_unit
 
 external_declaration
 	: function_definition { $$ = $1; }
-	| declaration
+	| declaration { $$ = $1; }
 	;
 
 function_definition
@@ -73,8 +73,8 @@ function_definition
 
 
 primary_expression
-	: IDENTIFIER { //name of variable
-        $$ = new VariableIdentifier($1); }
+	: IDENTIFIER {
+       	$$ = new Identifier(*$1); }
 	| INT_CONSTANT {
 		$$ = new IntConstant($1);
 	}
@@ -84,7 +84,7 @@ primary_expression
 	;
 
 postfix_expression
-	: primary_expression
+	: primary_expression { $$ = $1; }
 	| postfix_expression '[' expression ']'
 	| postfix_expression '(' ')'
 	| postfix_expression '(' argument_expression_list ')'
@@ -95,12 +95,12 @@ postfix_expression
 	;
 
 argument_expression_list
-	: assignment_expression
+	: assignment_expression { $$ = $1; }
 	| argument_expression_list ',' assignment_expression
 	;
 
 unary_expression
-	: postfix_expression
+	: postfix_expression { $$ = $1; }
 	| INC_OP unary_expression
 	| DEC_OP unary_expression
 	| unary_operator cast_expression
@@ -118,31 +118,31 @@ unary_operator
 	;
 
 cast_expression
-	: unary_expression
+	: unary_expression { $$ = $1; }
 	| '(' type_name ')' cast_expression
 	;
 
 multiplicative_expression
-	: cast_expression
-	| multiplicative_expression '*' cast_expression
-	| multiplicative_expression '/' cast_expression
-	| multiplicative_expression '%' cast_expression
+	: cast_expression { $$ = $1; }
+	| multiplicative_expression '*' cast_expression { $$ = new MulOperation($1, $3); }
+	| multiplicative_expression '/' cast_expression { $$ = new DivOperation($1, $3); }
+	| multiplicative_expression '%' cast_expression { $$ = new ModuloOperation($1, $3); }
 	;
 
 additive_expression
-	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression
-	| additive_expression '-' multiplicative_expression
+	: multiplicative_expression { $$ = $1; }
+	| additive_expression '+' multiplicative_expression { $$ = new AddOperation($1, $3); }
+	| additive_expression '-' multiplicative_expression { $$ = new SubOperation($1, $3); }
 	;
 
 shift_expression
-	: additive_expression
+	: additive_expression { $$ = $1; }
 	| shift_expression LEFT_OP additive_expression
 	| shift_expression RIGHT_OP additive_expression
 	;
 
 relational_expression
-	: shift_expression
+	: shift_expression { $$ = $1; }
 	| relational_expression '<' shift_expression
 	| relational_expression '>' shift_expression
 	| relational_expression LE_OP shift_expression
@@ -150,44 +150,44 @@ relational_expression
 	;
 
 equality_expression
-	: relational_expression
+	: relational_expression { $$=$1; }
 	| equality_expression EQ_OP relational_expression
 	| equality_expression NE_OP relational_expression
 	;
 
 and_expression
-	: equality_expression
+	: equality_expression { $$ = $1; }
 	| and_expression '&' equality_expression
 	;
 
 exclusive_or_expression
-	: and_expression
+	: and_expression { $$ = $1; }
 	| exclusive_or_expression '^' and_expression
 	;
 
 inclusive_or_expression
-	: exclusive_or_expression
+	: exclusive_or_expression { $$ = $1; }
 	| inclusive_or_expression '|' exclusive_or_expression
 	;
 
 logical_and_expression
-	: inclusive_or_expression
+	: inclusive_or_expression { $$ = $1; }
 	| logical_and_expression AND_OP inclusive_or_expression
 	;
 
 logical_or_expression
-	: logical_and_expression
+	: logical_and_expression { $$ = $1; }
 	| logical_or_expression OR_OP logical_and_expression
 	;
 
 conditional_expression
-	: logical_or_expression
+	: logical_or_expression { $$ = $1; }
 	| logical_or_expression '?' expression ':' conditional_expression
 	;
 
 assignment_expression
-	: conditional_expression
-	| unary_expression assignment_operator assignment_expression
+	: conditional_expression { $$ = $1;}
+	| unary_expression assignment_operator assignment_expression // { $$ = VariableDeclarator($1, $3); }
 	;
 
 assignment_operator
@@ -205,7 +205,7 @@ assignment_operator
 	;
 
 expression
-	: assignment_expression
+	: assignment_expression { $$ = $1; }
 	| expression ',' assignment_expression
 	;
 
@@ -226,13 +226,13 @@ declaration_specifiers
 	;
 
 init_declarator_list
-	: init_declarator
+	: init_declarator { $$ = $1; }
 	| init_declarator_list ',' init_declarator
 	;
 
 init_declarator
-	: declarator
-	| declarator '=' initializer ';' {
+	: declarator { $$ = $1; }
+	| declarator '=' initializer {
 		$$ = new VariableDeclarator($1,$3);
 	}
 	;
@@ -329,12 +329,12 @@ declarator
 direct_declarator
 	: IDENTIFIER {
 		$$ = new Identifier(*$1); //function name, pointer to String is owned directly
-        delete *$1;
+        delete $1;
 	}
 	| '(' declarator ')'
-	| direct_declarator '[' constant_expression ']'
+	| direct_declarator '[' constant_expression ']' //array declarator
 	| direct_declarator '[' ']'
-	| direct_declarator '(' parameter_list ')'
+	| direct_declarator '(' parameter_list ')' { $$ = new FunctionWithParamDefinition($1,$3); }
 	| direct_declarator '(' identifier_list ')'
 	| direct_declarator '(' ')' {
 		$$ = new DirectDeclarator($1); //no parameters
@@ -347,12 +347,12 @@ pointer
 	;
 
 parameter_list
-	: parameter_declaration
-	| parameter_list ',' parameter_declaration
+	: parameter_declaration { $$ = $1; }
+	| parameter_list ',' parameter_declaration { $$ = new ParameterList($1, $3); }
 	;
 
 parameter_declaration
-	: declaration_specifiers declarator
+	: declaration_specifiers declarator { $$ = new ParameterDeclarator($1, $2); }
 	| declaration_specifiers abstract_declarator
 	| declaration_specifiers
 	;
@@ -386,7 +386,7 @@ direct_abstract_declarator
 	;
 
 initializer
-	: assignment_expression
+	: assignment_expression { $$ = $1; }
 	| '{' initializer_list '}'
 	| '{' initializer_list ',' '}'
 	;
@@ -398,10 +398,10 @@ initializer_list
 
 statement
 	: labeled_statement
-	| compound_statement
-	| expression_statement
-	| selection_statement
-	| iteration_statement
+	| compound_statement { $$ = $1; }
+	| expression_statement { $$ = $1; }
+	| selection_statement { $$ = $1; }
+	| iteration_statement { $$ = $1; }
 	| jump_statement { $$ = $1; }
 	;
 
@@ -422,7 +422,7 @@ compound_statement
 		$$ = $2;
 	}
 	| '{' declaration_list statement_list '}'  {
-		$$ = $3;
+		$$ = $3; // may need to implement multiline here
 	}
 	;
 
@@ -432,7 +432,7 @@ declaration_list
 	;
 
 statement_list
-	: statement { $$ = new NodeList($1); }
+	: statement { $$ = new NodeList($1); }  // creates a list of nodes
 	| statement_list statement { $1->PushBack($2); $$=$1; }
 	;
 
