@@ -394,4 +394,74 @@ public:
 };
 
 
+
+class NotEqual : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    NotEqual(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~NotEqual(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+        
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+        stream << "sub " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        stream << "seqz " << context.getRegisterName(destReg) << ", " << context.getRegisterName(destReg) << std::endl;
+        stream << "xori " << context.getRegisterName(destReg) <<", "<<context.getRegisterName(destReg)<<", 1"<<std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " != ";
+        branches[1]->Print(stream);
+    }
+};
+
+class ShiftLeft : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    ShiftLeft(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~ShiftLeft(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+        
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+        stream << "sll " << context.getRegisterName(destReg) << ", " << context.getRegisterName(leftRegister) << ", " << context.getRegisterName(rightRegister) << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " << ";
+        branches[1]->Print(stream);
+    }
+};
+
+
 #endif

@@ -138,8 +138,8 @@ additive_expression
 
 shift_expression
 	: additive_expression { $$ = $1; }
-	| shift_expression LEFT_OP additive_expression
-	| shift_expression RIGHT_OP additive_expression
+	| shift_expression LEFT_OP additive_expression 
+	| shift_expression RIGHT_OP additive_expression 
 	;
 
 relational_expression
@@ -153,13 +153,13 @@ relational_expression
 equality_expression
 	: relational_expression { $$=$1; }
 	| equality_expression EQ_OP relational_expression {$$= new Equal($1,$3);}
-	| equality_expression NE_OP relational_expression
+	| equality_expression NE_OP relational_expression {$$= new NotEqual($1,$3);}
 	;
 
 and_expression
 	: equality_expression { $$ = $1; }
 	| and_expression '&' equality_expression {$$ = new BitwiseAnd($1, $3);}
-	;
+
 
 exclusive_or_expression
 	: and_expression { $$ = $1; }
@@ -449,7 +449,7 @@ selection_statement
 	;
 
 iteration_statement
-	: WHILE '(' expression ')' statement
+	: WHILE '(' expression ')' statement { $$ = new WhileLoop($3, $5); }
 	| DO statement WHILE '(' expression ')' ';'
 	| FOR '(' expression_statement expression_statement ')' statement
 	| FOR '(' expression_statement expression_statement expression ')' statement

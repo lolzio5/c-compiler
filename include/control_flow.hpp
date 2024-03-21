@@ -3,6 +3,39 @@
 
 #include "node.hpp"
 
+class WhileLoop : public Node
+{
+private:
+Node* condition;
+Node* statement;
+public:
+    WhileLoop(Node* condition_, Node* statement_): condition(condition_), statement(statement_){}
+    ~WhileLoop(){
+        delete condition;
+        delete statement;
+    }
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        std::string top = context.nameNewBranch();
+        std::string exit = context.nameNewBranch();
+        int conditionValueRegister = context.findFreeRegister();
+        stream<<"j ."<<exit<<":"<<std::endl;
+        stream<<"."<<top<<":"<<std::endl;
+        statement->EmitRISC(stream, context, destReg);
+        stream<<"."<<exit<<":"<<std::endl;
+        condition->EmitRISC(stream,context,destReg);
+        stream<<"bne "<<context.getRegisterName(conditionValueRegister)<<", zero, "<<top<<std::endl;
+        stream<<exit<<":"<<std::endl;
+        context.freeRegister(conditionValueRegister);
+    }
+    void Print(std::ostream &stream) const {
+        stream<<"while(";
+        condition->Print(stream);
+        stream<<"){";
+        statement->Print(stream);
+        stream<<"}"<<std::endl;
+    }
+
+};
 
 class IfStatement : public Node
 {
