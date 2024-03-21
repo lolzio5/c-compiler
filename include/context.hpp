@@ -26,7 +26,7 @@ private:
         0, 0, 0, 0, //t3-t6 i = 28-31, temporary registers
     };
 
-    int currentStackLocation;
+    int currentStackLocation = -16;
 
 public:
     std::map<std::string, int> getBindings(){
@@ -35,7 +35,9 @@ public:
 
     // Add and find variables
     int bindVariable(std::string variableName){
+        currentStackLocation=currentStackLocation-4;
         variables[variableName]=currentStackLocation;
+        return currentStackLocation;
     }
     int variableLocation(std::string variableName){
         auto variableIndex = variables.find(variableName);

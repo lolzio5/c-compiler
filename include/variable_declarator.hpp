@@ -10,25 +10,21 @@ private:
     Node *declarator;
     Node *initialiser;
 public:
-    VariableDeclarator(Node* declarator, Node* initialiser){
-        branches.push_back(declarator);
-        branches.push_back(initialiser);
-    }
+    VariableDeclarator(Node* declarator_, Node* initialiser_) : declarator(declarator_), initialiser(initialiser_){}
 
     virtual ~VariableDeclarator(){
-        for (auto node : branches) {
-            delete node;
-        }
+        delete declarator;
+        delete initialiser;
     }
 
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const{
-        branches[0]->EmitRISC(stream, context, destReg);
-        branches[1]->EmitRISC(stream, context, destReg);
+        declarator->EmitRISC(stream, context, destReg);
+        initialiser->EmitRISC(stream, context, destReg);
     }
     void Print(std::ostream &stream) const {
-        branches[0]->Print(stream);
+        declarator->Print(stream);
         stream<<" = "<<std::endl;
-        branches[1]->Print(stream);
+        initialiser->Print(stream);
     }
 };
 

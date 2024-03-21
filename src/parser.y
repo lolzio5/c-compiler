@@ -74,7 +74,7 @@ function_definition
 
 primary_expression
 	: IDENTIFIER {
-       	$$ = new Identifier(*$1); }
+       	$$ = new VariableIdentifier(*$1); }
 	| INT_CONSTANT {
 		$$ = new IntConstant($1);
 	}
@@ -328,7 +328,7 @@ declarator
 
 direct_declarator
 	: IDENTIFIER {
-		$$ = new Identifier(*$1); //function name, pointer to String is owned directly
+		$$ = new FunctionIdentifier(*$1); //function name, pointer to String is owned directly
         delete $1;
 	}
 	| '(' declarator ')'

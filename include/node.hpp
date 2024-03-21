@@ -20,6 +20,9 @@ public:
     }
     virtual void EmitRISC(std::ostream &stream, Context &context, int destReg) const = 0;
     virtual void Print(std::ostream &stream) const = 0;
+    virtual std::string GetIdentifier() const {
+        std::cerr<<"Error"<<std::endl;
+    }
 };
 
 // Represents a list of nodes.

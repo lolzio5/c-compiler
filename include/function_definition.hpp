@@ -47,26 +47,21 @@ private:
     Node *parameters;
 
 public:
-    FunctionWithParamDefinition(Node *declarator_, Node *parameters_) : declarator(declarator_), parameters(parameters_){
-        branches.push_back(declarator);
-        branches.push_back(parameters);
-
-    };
+    FunctionWithParamDefinition(Node *declarator_, Node *parameters_) : declarator(declarator_), parameters(parameters_){}
     ~FunctionWithParamDefinition()
     {
-        for (auto branch : branches){
-            delete branch;
-        }
+        delete declarator;
+        delete parameters;
     };
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
-        branches[0]->EmitRISC(stream, context, destReg);
+        declarator->EmitRISC(stream, context, destReg);
         stream << ":" << std::endl;
-        branches[1]->EmitRISC(stream, context, destReg);
+        parameters->EmitRISC(stream, context, destReg);
     }
     void Print(std::ostream &stream) const {
-        branches[0]->Print(stream);
+        declarator->Print(stream);
         stream<<"(";
-        branches[1]->Print(stream);
+        parameters->Print(stream);
         stream<<")";
     }
 };
@@ -78,52 +73,50 @@ private:
     Node *parameter_declaration;
 
 public:
-    ParameterList(Node *parameter_list_, Node *parameter_declaration_) : parameter_list(parameter_list_), parameter_declaration(parameter_declaration_){
-        branches.push_back(parameter_list);
-        branches.push_back(parameter_declaration);
-    };
+    ParameterList(Node *parameter_list_, Node *parameter_declaration_) : parameter_list(parameter_list_), parameter_declaration(parameter_declaration_){}
     ~ParameterList()
     {
-        for (auto node : branches){
-            delete node;
-        }
+        delete parameter_list;
+        delete parameter_declaration;
     };
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
 
-        branches[0]->EmitRISC(stream, context, destReg);
-        branches[1]->EmitRISC(stream, context, destReg);
+        parameter_list->EmitRISC(stream, context, destReg);
+        parameter_declaration->EmitRISC(stream, context, destReg);
     }
     void Print(std::ostream &stream) const {
-        branches[0]->Print(stream);
-        branches[1]->Print(stream);
+        parameter_list->Print(stream);
+        stream<<", ";
+        parameter_declaration->Print(stream);
     }
 };
 
 class ParameterDeclarator : public Node
 {
 private:
-    Node *parameter_list;
-    Node *parameter_declaration;
+    Node *declaration_specifier;
+    Node *declarator;
 
 public:
-    ParameterDeclarator(Node *parameter_list_, Node *parameter_declaration_) : parameter_list(parameter_list_), parameter_declaration(parameter_declaration_){
-        branches.push_back(parameter_list);
-        branches.push_back(parameter_declaration);
-    };
+    ParameterDeclarator(Node *declaration_specifier_, Node *declarator_) : declaration_specifier(declaration_specifier_), declarator(declarator_){}
     ~ParameterDeclarator()
     {
-        for (auto node : branches){
-            delete node;
-        }
+        delete declarator;
+        delete declaration_specifier;
     };
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
 
-        branches[0]->EmitRISC(stream, context, destReg);
-        branches[1]->EmitRISC(stream, context, destReg);
+        std::string variableName = declarator->GetIdentifier();
+        int variableAddress = context.bindVariable(variableName);
+        int parameterRegister = context.findFreeRegister();
+
+        stream<<"sw "<<context.getRegisterName(parameterRegister)<<", "<<variableAddress<<"(s0)"<<std::endl;
     }
     void Print(std::ostream &stream) const {
-        branches[0]->Print(stream);
-        branches[1]->Print(stream);
+        declaration_specifier->Print(stream);
+        stream<<" ";
+        declarator->Print(stream);
+        stream<<" ";
     }
 };
 
