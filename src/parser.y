@@ -75,7 +75,8 @@ function_definition
 primary_expression
 	: IDENTIFIER {
        	$$ = new VariableIdentifier(*$1);
-		delete $1;}
+		delete $1;
+	}
 	| INT_CONSTANT {
 		$$ = new IntConstant($1);
 	}
@@ -187,7 +188,7 @@ conditional_expression
 	;
 
 assignment_expression
-	: conditional_expression 
+	: conditional_expression { $$ = $1; }
 	| unary_expression assignment_operator assignment_expression  { $$ = new VariableAssignExpression($1, $3); }
 	;
 
@@ -215,7 +216,7 @@ constant_expression
 	;
 
 declaration
-	: declaration_specifiers ';' { $$ = $1; }
+	: declaration_specifiers ';'// { $$ = $1; }
 	| declaration_specifiers init_declarator_list ';' { $$ = new MultiDeclarator($1, $2); }
 	;
 
@@ -227,8 +228,8 @@ declaration_specifiers
 	;
 
 init_declarator_list
-	: init_declarator { $$ = $1; }
-	| init_declarator_list ',' init_declarator
+	: init_declarator //{ $$ = new NodeList($1); }
+	| init_declarator_list ',' init_declarator //{ $1->PushBack($3); $$=$1; }
 	;
 
 init_declarator

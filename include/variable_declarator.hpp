@@ -36,6 +36,8 @@ public:
             declarator->Print(stream);
         }
 
+        stream << ";" << std::endl;
+
     }
 };
 
@@ -59,12 +61,24 @@ public:
 
         std::string variableName = unary_expression->GetIdentifier();
 
+        std::string variableType;
+        int currentStackLocation;
         if (context.variableLocation(variableName)==-1){
-            int currentStackLocation=context.bindVariable(variableName);
-            stream<<"sw "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+            currentStackLocation=context.bindVariable(variableName, variableType);
+            variableType="double";
         }
         else{
-            int currentStackLocation=context.variableLocation(variableName);
+            currentStackLocation=context.variableLocation(variableName);
+           variableType = assignement_expression->GetType();
+        }
+
+        if (variableType=="float"){
+            stream<<"fsw f"<<context.getRegisterName(destReg)<<", " <<currentStackLocation<<"(s0)"<<std::endl;
+        }
+        else if(variableType=="double"){
+            stream<<"fsd f"<<context.getRegisterName(destReg)<<", " <<currentStackLocation<<"(s0)"<<std::endl;
+        }
+        else{
             stream<<"sw "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
         }
     }
@@ -72,7 +86,6 @@ public:
         unary_expression->Print(stream);
         stream<<" = ";
         assignement_expression->Print(stream);
-
     }
 };
 

@@ -22,7 +22,16 @@ public:
         leftValue->EmitRISC(stream, context, leftRegister);
         rightValue->EmitRISC(stream, context, rightRegister);
 
-        stream<<"add "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(leftRegister)<<", "<<context.getRegisterName(rightRegister)<<std::endl;
+        std::string variableType = context.getVariableType(leftValue->GetIdentifier());
+        if (variableType=="float"){
+            stream<<"fadd.s f"<<context.getRegisterName(destReg)<<", f"<<context.getRegisterName(leftRegister)<<", f"<<context.getRegisterName(rightRegister)<<std::endl;
+        }
+        else if (variableType=="double"){
+            stream<<"fadd.d f"<<context.getRegisterName(destReg)<<", f"<<context.getRegisterName(leftRegister)<<", f"<<context.getRegisterName(rightRegister)<<std::endl;
+        }
+        else{
+            stream<<"add "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(leftRegister)<<", "<<context.getRegisterName(rightRegister)<<std::endl;
+        }
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
     }
@@ -52,7 +61,16 @@ public:
         leftValue->EmitRISC(stream, context, leftRegister);
         rightValue->EmitRISC(stream, context, rightRegister);
 
-        stream<<"sub "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(rightRegister)<<", "<<context.getRegisterName(leftRegister)<<std::endl;
+        std::string variableType = context.getVariableType(leftValue->GetIdentifier());
+        if (variableType=="float"){
+            stream<<"fsub.s f"<<context.getRegisterName(destReg)<<", f"<<context.getRegisterName(rightRegister)<<", f"<<context.getRegisterName(leftRegister)<<std::endl;
+        }
+        else if (variableType=="double"){
+            stream<<"fsub.d f"<<context.getRegisterName(destReg)<<", f"<<context.getRegisterName(rightRegister)<<", f"<<context.getRegisterName(leftRegister)<<std::endl;
+        }
+        else{
+            stream<<"sub "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(rightRegister)<<", "<<context.getRegisterName(leftRegister)<<std::endl;
+        }
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
     }
@@ -82,7 +100,16 @@ public:
         leftValue->EmitRISC(stream, context, leftRegister);
         rightValue->EmitRISC(stream, context, rightRegister);
 
-        stream<<"mul "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(leftRegister)<<", "<<context.getRegisterName(rightRegister)<<std::endl;
+        std::string variableType = context.getVariableType(leftValue->GetIdentifier());
+        if (variableType=="float"){
+            stream<<"fmul.s f"<<context.getRegisterName(destReg)<<", f"<<context.getRegisterName(leftRegister)<<", f"<<context.getRegisterName(rightRegister)<<std::endl;
+        }
+        else if (variableType=="double"){
+            stream<<"fmul.d f"<<context.getRegisterName(destReg)<<", f"<<context.getRegisterName(leftRegister)<<", f"<<context.getRegisterName(rightRegister)<<std::endl;
+        }
+        else{
+            stream<<"mul "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(leftRegister)<<", "<<context.getRegisterName(rightRegister)<<std::endl;
+        }
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
     }
@@ -112,7 +139,16 @@ public:
         leftValue->EmitRISC(stream, context, leftRegister);
         rightValue->EmitRISC(stream, context, rightRegister);
 
-        stream<<"div "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(leftRegister)<<", "<<context.getRegisterName(rightRegister)<<std::endl;
+        std::string variableType = context.getVariableType(leftValue->GetIdentifier());
+        if (variableType=="float"){
+            stream<<"fdiv.s f"<<context.getRegisterName(destReg)<<", f"<<context.getRegisterName(rightRegister)<<", f"<<context.getRegisterName(leftRegister)<<std::endl;
+        }
+        else if (variableType=="double"){
+            stream<<"fdiv.d f"<<context.getRegisterName(destReg)<<", f"<<context.getRegisterName(rightRegister)<<", f"<<context.getRegisterName(leftRegister)<<std::endl;
+        }
+        else{
+            stream<<"div "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(rightRegister)<<", "<<context.getRegisterName(leftRegister)<<std::endl;
+        }
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
     }
@@ -142,7 +178,16 @@ public:
         leftValue->EmitRISC(stream, context, leftRegister);
         rightValue->EmitRISC(stream, context, rightRegister);
 
-        stream<<"rem "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(leftRegister)<<", "<<context.getRegisterName(rightRegister)<<std::endl;
+        std::string variableType = context.getVariableType(leftValue->GetIdentifier());
+        if (variableType=="float"){
+            stream<<"frem.s f"<<context.getRegisterName(destReg)<<", f"<<context.getRegisterName(leftRegister)<<", f"<<context.getRegisterName(rightRegister)<<std::endl;
+        }
+        else if (variableType=="double"){
+            stream<<"frem.d f"<<context.getRegisterName(destReg)<<", f"<<context.getRegisterName(leftRegister)<<", f"<<context.getRegisterName(rightRegister)<<std::endl;
+        }
+        else{
+            stream<<"rem "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(leftRegister)<<", "<<context.getRegisterName(rightRegister)<<std::endl;
+        }
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
     }

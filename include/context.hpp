@@ -10,7 +10,8 @@
 class Context
 {
 private:
-    std::map<std::string, int> variables; // Variabl name binding to stack location
+    std::map<std::string, int> variableStackAddresses; // Variable name binding to stack location
+    std::map<std::string, std::string> variableTypes; // Variable name binding to type
 
     int usedRegisters[32] = {
         1, //x0 i = 0, reg zero
@@ -29,8 +30,15 @@ private:
     int currentStackLocation = -16;
 
 public:
-    std::map<std::string, int> getBindings(){
-        return variables;
+
+    std::string getVariableType(std::string variableName){
+        auto variableIndex = variableTypes.find(variableName);
+        if(variableIndex!=variableTypes.end()){
+            return variableIndex->second;
+        }
+        else{
+            return "";  // Return an empty string
+        }
     }
 
     std::string nameNewBranch(){
@@ -40,14 +48,15 @@ public:
     }
 
     // Add and find variables
-    int bindVariable(std::string variableName){
+    int bindVariable(std::string variableName, std::string variableType){
         currentStackLocation=currentStackLocation-4;
-        variables[variableName]=currentStackLocation;
+        variableStackAddresses[variableName]=currentStackLocation;
+        variableTypes[variableName]=variableType;
         return currentStackLocation;
     }
     int variableLocation(std::string variableName){
-        auto variableIndex = variables.find(variableName);
-        if(variableIndex!=variables.end()){
+        auto variableIndex = variableStackAddresses.find(variableName);
+        if(variableIndex!=variableStackAddresses.end()){
             return variableIndex->second;
         }
         else{

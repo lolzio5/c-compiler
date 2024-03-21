@@ -15,6 +15,9 @@ public:
     void Print(std::ostream &stream) const {
         stream << type_;
     }
+    std::string GetType() const{
+        return type_;
+    }
 };
 
 #endif

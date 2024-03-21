@@ -34,16 +34,17 @@ public:
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
         int currentStackLocation = context.variableLocation(identifier_);
         if (currentStackLocation!=-1){
-            stream<<"lw "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+            std::string variableType=context.getVariableType(identifier_);
+            if(variableType=="double"){
+                stream<<"fld f"<<context.getRegisterName(destReg)<<", "<<currentStackLocation<< "(s0)"<<std::endl;
+            }
+            else if (variableType=="float"){
+                stream<<"flw f"<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+            }
+            else{
+                stream<<"lw "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+            }
         }
-        else{
-            std::string variableName = identifier_;
-            int variableAddress = context.bindVariable(variableName);
-            int variableRegister = context.findFreeRegister();
-            stream<<"sw "<<context.getRegisterName(variableRegister)<<", "<<variableAddress<<"(s0)"<<std::endl;
-            context.freeRegister(variableRegister);
-        }
-
     }
     void Print(std::ostream &stream) const {
         stream << identifier_;

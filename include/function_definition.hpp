@@ -106,10 +106,21 @@ public:
     };
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
 
+        std::string variableType = declaration_specifier->GetType();
         std::string variableName = declarator->GetIdentifier();
-        int variableAddress = context.bindVariable(variableName);
+
+        int variableAddress = context.bindVariable(variableName, variableType);
         int parameterRegister = context.findFreeParamRegister();
-        stream<<"sw "<<context.getRegisterName(parameterRegister)<<", "<<variableAddress<<"(s0)"<<std::endl;
+
+        if(variableType=="float"){
+            stream<<"fsw f"<<context.getRegisterName(parameterRegister)<<", " <<variableAddress<<"(s0)"<<std::endl;
+        }
+        else if (variableType=="double"){
+            stream<<"fsd f"<<context.getRegisterName(parameterRegister)<<", " <<variableAddress<<"(s0)"<<std::endl;
+        }
+        else{
+             stream<<"sw "<<context.getRegisterName(parameterRegister)<<", "<<variableAddress<<"(s0)"<<std::endl;
+        }
     }
     void Print(std::ostream &stream) const {
         declaration_specifier->Print(stream);
