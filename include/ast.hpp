@@ -16,6 +16,7 @@
 #include "variable_declarator.hpp"
 #include "arithmetic_operators.hpp"
 #include "control_flow.hpp"
+#include "multi_declaration.hpp"
 
 extern Node *ParseAST(std::string file_name);
 
