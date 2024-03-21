@@ -143,10 +143,10 @@ shift_expression
 
 relational_expression
 	: shift_expression { $$ = $1; }
-	| relational_expression '<' shift_expression
-	| relational_expression '>' shift_expression
-	| relational_expression LE_OP shift_expression
-	| relational_expression GE_OP shift_expression
+	| relational_expression '<' shift_expression {$$ = new LessThan($1, $3);}
+	| relational_expression '>' shift_expression {$$ = new GreaterThan($1, $3);}
+	| relational_expression LE_OP shift_expression {$$ = new LessThanEqual($1, $3);}
+	| relational_expression GE_OP shift_expression {$$ = new GreaterThanEqual($1, $3);}
 	;
 
 equality_expression
@@ -157,7 +157,7 @@ equality_expression
 
 and_expression
 	: equality_expression { $$ = $1; }
-	| and_expression '&' equality_expression
+	| and_expression '&' equality_expression {$$ = new BitwiseAnd($1, $3);}
 	;
 
 exclusive_or_expression
@@ -167,12 +167,12 @@ exclusive_or_expression
 
 inclusive_or_expression
 	: exclusive_or_expression { $$ = $1; }
-	| inclusive_or_expression '|' exclusive_or_expression
+	| inclusive_or_expression '|' exclusive_or_expression {$$ = new BitwiseOr($1, $3);}
 	;
 
 logical_and_expression
 	: inclusive_or_expression { $$ = $1; }
-	| logical_and_expression AND_OP inclusive_or_expression
+	|  AND_OP inclusive_or_expression
 	;
 
 logical_or_expression
