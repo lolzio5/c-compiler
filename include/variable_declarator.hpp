@@ -18,13 +18,13 @@ public:
     }
 
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const{
-        declarator->EmitRISC(stream, context, destReg);
         initialiser->EmitRISC(stream, context, destReg);
+        declarator->EmitRISC(stream, context, destReg);
     }
     void Print(std::ostream &stream) const {
-        declarator->Print(stream);
-        stream<<" = "<<std::endl;
         initialiser->Print(stream);
+        stream<<" = "<<std::endl;
+        declarator->Print(stream);
     }
 };
 

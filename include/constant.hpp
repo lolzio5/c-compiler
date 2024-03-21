@@ -9,7 +9,7 @@ private:
     int value_;
 public:
     IntConstant(int value) : value_(value) {}
-
+    ~IntConstant(){}
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
         stream << "li " << context.getRegisterName(destReg)<<", "<< value_ << std::endl;
     }

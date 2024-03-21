@@ -40,6 +40,7 @@ public:
         {
             delete node;
         }
+
     }
 
     void PushBack(Node *item){

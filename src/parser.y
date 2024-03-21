@@ -74,7 +74,8 @@ function_definition
 
 primary_expression
 	: IDENTIFIER {
-       	$$ = new VariableIdentifier(*$1); }
+       	$$ = new VariableIdentifier(*$1);
+		delete $1;}
 	| INT_CONSTANT {
 		$$ = new IntConstant($1);
 	}

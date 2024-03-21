@@ -81,13 +81,13 @@ public:
     };
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
 
-        parameter_list->EmitRISC(stream, context, destReg);
         parameter_declaration->EmitRISC(stream, context, destReg);
+        parameter_list->EmitRISC(stream, context, destReg);
     }
     void Print(std::ostream &stream) const {
-        parameter_list->Print(stream);
-        stream<<", ";
         parameter_declaration->Print(stream);
+        stream<<", ";
+        parameter_list->Print(stream);
     }
 };
 
@@ -101,8 +101,8 @@ public:
     ParameterDeclarator(Node *declaration_specifier_, Node *declarator_) : declaration_specifier(declaration_specifier_), declarator(declarator_){}
     ~ParameterDeclarator()
     {
-        delete declarator;
         delete declaration_specifier;
+        delete declarator;
     };
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
 
@@ -116,7 +116,6 @@ public:
         declaration_specifier->Print(stream);
         stream<<" ";
         declarator->Print(stream);
-        stream<<" ";
     }
 };
 
