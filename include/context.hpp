@@ -33,7 +33,7 @@ public:
         return variables;
     }
 
-    std::string NameNewBranch(){
+    std::string nameNewBranch(){
        static int x=0;
        x++;
        return "L" + std::to_string(x);

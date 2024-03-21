@@ -443,7 +443,7 @@ expression_statement
 	;
 
 selection_statement
-	: IF '(' expression ')' statement
+	: IF '(' expression ')' statement { $$ = new IfStatement($3, $5); }
 	| IF '(' expression ')' statement ELSE statement
 	| SWITCH '(' expression ')' statement
 	;
