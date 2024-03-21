@@ -34,9 +34,9 @@ public:
     }
 
     std::string NameNewBranch(){
-        static int x=0;
-        x++;
-        return "L" + std::to_string(x);
+       static int x=0;
+       x++;
+       return "L" + std::to_string(x);
     }
 
     // Add and find variables
