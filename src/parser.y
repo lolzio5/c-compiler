@@ -152,7 +152,7 @@ relational_expression
 
 equality_expression
 	: relational_expression { $$=$1; }
-	| equality_expression EQ_OP relational_expression
+	| equality_expression EQ_OP relational_expression {$$= new Equal($1,$3);}
 	| equality_expression NE_OP relational_expression
 	;
 
