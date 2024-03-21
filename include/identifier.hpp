@@ -32,7 +32,18 @@ public:
     VariableIdentifier(std::string identifier) : identifier_(identifier){};
     ~VariableIdentifier(){};
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
-        stream<<"lw "<<context.getRegisterName(destReg)<<", "<<context.variableLocation(identifier_)<<"(s0)"<<std::endl;
+        int currentStackLocation = context.variableLocation(identifier_);
+        if (currentStackLocation!=-1){
+            stream<<"lw "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+        }
+        else{
+            std::string variableName = identifier_;
+            int variableAddress = context.bindVariable(variableName);
+            int variableRegister = context.findFreeRegister();
+            stream<<"sw "<<context.getRegisterName(variableRegister)<<", "<<variableAddress<<"(s0)"<<std::endl;
+            context.freeRegister(variableRegister);
+        }
+
     }
     void Print(std::ostream &stream) const {
         stream << identifier_;

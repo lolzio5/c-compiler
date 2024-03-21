@@ -52,13 +52,13 @@ public:
         leftValue->EmitRISC(stream, context, leftRegister);
         rightValue->EmitRISC(stream, context, rightRegister);
 
-        stream<<"sub "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(leftRegister)<<", "<<context.getRegisterName(rightRegister)<<std::endl;
+        stream<<"sub "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(rightRegister)<<", "<<context.getRegisterName(leftRegister)<<std::endl;
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
     }
     void Print(std::ostream &stream) const {
         leftValue->Print(stream);
-        stream<<" - "<<std::endl;
+        stream<<" - ";
         rightValue->Print(stream);
     }
 };
@@ -88,7 +88,7 @@ public:
     }
     void Print(std::ostream &stream) const {
         leftValue->Print(stream);
-        stream<<" * "<<std::endl;
+        stream<<" * ";
         rightValue->Print(stream);
     }
 };
@@ -118,7 +118,7 @@ public:
     }
     void Print(std::ostream &stream) const {
         leftValue->Print(stream);
-        stream<<" / "<<std::endl;
+        stream<<" / ";
         rightValue->Print(stream);
     }
 };
@@ -148,7 +148,7 @@ public:
     }
     void Print(std::ostream &stream) const {
         leftValue->Print(stream);
-        stream<<" % "<<std::endl;
+        stream<<" % ";
         rightValue->Print(stream);
     }
 };
@@ -174,7 +174,7 @@ public:
         int rightRegister = context.findFreeRegister();
         branches[1]->EmitRISC(stream, context, rightRegister);
         branches[0]->EmitRISC(stream, context, leftRegister);
-        
+
 
         stream << "slt " <<context.getRegisterName(leftRegister)<<", " <<context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
         stream << "andi "<<context.getRegisterName(destReg)<< ", " <<context.getRegisterName(leftRegister)<<", 0xff"<<std::endl;
@@ -208,7 +208,7 @@ public:
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
             int leftRegister = context.findFreeRegister();
         int rightRegister = context.findFreeRegister();
-        
+
         branches[0]->EmitRISC(stream, context, leftRegister);
         branches[1]->EmitRISC(stream, context, rightRegister);
         stream << "slt " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
@@ -246,7 +246,7 @@ public:
         int rightRegister = context.findFreeRegister();
         branches[1]->EmitRISC(stream, context, rightRegister);
         branches[0]->EmitRISC(stream, context, leftRegister);
-        
+
 
         stream << "slt " <<context.getRegisterName(leftRegister)<<", " <<context.getRegisterName(leftRegister) << ", " << context.getRegisterName(rightRegister) << std::endl;
         stream << "andi "<<context.getRegisterName(destReg)<< ", " <<context.getRegisterName(leftRegister)<<", 0xff"<<std::endl;
@@ -280,7 +280,7 @@ public:
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
             int leftRegister = context.findFreeRegister();
         int rightRegister = context.findFreeRegister();
-        
+
         branches[0]->EmitRISC(stream, context, leftRegister);
         branches[1]->EmitRISC(stream, context, rightRegister);
         stream << "sgt " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
@@ -378,7 +378,7 @@ public:
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
         int leftRegister = context.findFreeRegister();
         int rightRegister = context.findFreeRegister();
-        
+
         branches[0]->EmitRISC(stream, context, leftRegister);
         branches[1]->EmitRISC(stream, context, rightRegister);
         stream << "sub " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;

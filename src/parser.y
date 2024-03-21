@@ -187,7 +187,7 @@ conditional_expression
 	;
 
 assignment_expression
-	: conditional_expression { $$ = $1;}
+	: conditional_expression 
 	| unary_expression assignment_operator assignment_expression  { $$ = new VariableAssignExpression($1, $3); }
 	;
 
@@ -216,7 +216,7 @@ constant_expression
 
 declaration
 	: declaration_specifiers ';' { $$ = $1; }
-	| declaration_specifiers init_declarator_list ';'
+	| declaration_specifiers init_declarator_list ';' { $$ = new MultiDeclarator($1, $2); }
 	;
 
 declaration_specifiers
@@ -428,13 +428,15 @@ compound_statement
 	;
 
 declaration_list
-	: declaration
+	: declaration { $$ = $1; }
 	| declaration_list declaration
 	;
 
 statement_list
 	: statement { $$ = new NodeList($1); }  // creates a list of nodes
-	| statement_list statement { $1->PushBack($2); $$=$1; }
+	| statement_list statement { $1->PushBack($2);
+								 $$=$1;
+	}
 	;
 
 expression_statement
