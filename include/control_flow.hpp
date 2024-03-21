@@ -6,8 +6,8 @@
 class WhileLoop : public Node
 {
 private:
-Node* condition;
-Node* statement;
+    Node* condition;
+    Node* statement;
 public:
     WhileLoop(Node* condition_, Node* statement_): condition(condition_), statement(statement_){}
     ~WhileLoop(){
@@ -30,10 +30,11 @@ public:
         stream << "beq " << context.getRegisterName(conditionValueRegister) << ", zero, " << loopEndLabel << std::endl;
 
         // Emit code for the loop body
-        statement->EmitRISC(stream, context, destReg);
-
-        // Unconditionally jump back to the start of the loop
-        stream << "j " << loopStartLabel << std::endl;
+        if(statement!=nullptr){
+            statement->EmitRISC(stream, context, destReg);
+            // Unconditionally jump back to the start of the loop
+            stream << "j " << loopStartLabel << std::endl;
+        }
 
         // Emit label for the end of the loop
         stream << loopEndLabel << ":" << std::endl;
@@ -46,11 +47,12 @@ public:
     void Print(std::ostream &stream) const {
         stream<<"while(";
         condition->Print(stream);
-        stream<<"){";
-        statement->Print(stream);
+        stream<<"){"<<std::endl;
+        if (statement!=nullptr){
+            statement->Print(stream);
+        }
         stream<<"}"<<std::endl;
     }
-
 };
 
 class ForLoop : public Node

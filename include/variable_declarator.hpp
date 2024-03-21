@@ -69,7 +69,7 @@ public:
         }
         else{
             currentStackLocation=context.variableLocation(variableName);
-           variableType = assignement_expression->GetType();
+            variableType = context.getVariableType(variableName);
         }
 
         if (variableType=="float"){
