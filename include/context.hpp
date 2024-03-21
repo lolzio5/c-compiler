@@ -33,6 +33,12 @@ public:
         return variables;
     }
 
+    std::string NameNewBranch(){
+        static int x=0;
+        x++;
+        return "L" + std::to_string(x);
+    }
+
     // Add and find variables
     int bindVariable(std::string variableName){
         variables[variableName]=currentStackLocation;
