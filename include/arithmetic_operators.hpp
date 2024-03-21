@@ -207,7 +207,7 @@ public:
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
             int leftRegister = context.findFreeRegister();
         int rightRegister = context.findFreeRegister();
-        
+
         branches[0]->EmitRISC(stream, context, leftRegister);
         branches[1]->EmitRISC(stream, context, rightRegister);
         stream << "slt " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
@@ -278,10 +278,10 @@ public:
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
             int leftRegister = context.findFreeRegister();
         int rightRegister = context.findFreeRegister();
-        
+
         branches[0]->EmitRISC(stream, context, leftRegister);
         branches[1]->EmitRISC(stream, context, rightRegister);
-        stream << "sgt " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        stream << "sgt " << context.getRegisterName(destReg) << ", " << context.getRegisterName(leftRegister) << ", " << context.getRegisterName(rightRegister) << std::endl;
         stream << "xori " << context.getRegisterName(destReg) << ", " << context.getRegisterName(destReg) << ", 1" << std::endl;
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
@@ -312,10 +312,10 @@ public:
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
         int leftRegister = context.findFreeRegister();
         int rightRegister = context.findFreeRegister();
-        
+
         branches[0]->EmitRISC(stream, context, leftRegister);
         branches[1]->EmitRISC(stream, context, rightRegister);
-        stream << "and " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        stream << "and " << context.getRegisterName(destReg) << ", " << context.getRegisterName(leftRegister) << ", " << context.getRegisterName(rightRegister) << std::endl;
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
     }
@@ -345,10 +345,10 @@ public:
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
         int leftRegister = context.findFreeRegister();
         int rightRegister = context.findFreeRegister();
-        
+
         branches[0]->EmitRISC(stream, context, leftRegister);
         branches[1]->EmitRISC(stream, context, rightRegister);
-        stream << "or " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        stream << "or " << context.getRegisterName(destReg) << ", " << context.getRegisterName(leftRegister) << ", " << context.getRegisterName(rightRegister) << std::endl;
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
     }
@@ -378,10 +378,10 @@ public:
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
         int leftRegister = context.findFreeRegister();
         int rightRegister = context.findFreeRegister();
-        
+
         branches[0]->EmitRISC(stream, context, leftRegister);
         branches[1]->EmitRISC(stream, context, rightRegister);
-        stream << "sub " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        stream << "sub " << context.getRegisterName(destReg) << ", " << context.getRegisterName(leftRegister) << ", " << context.getRegisterName(rightRegister) << std::endl;
         stream << "seqz " << context.getRegisterName(destReg) << ", " << context.getRegisterName(destReg) << std::endl;
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);

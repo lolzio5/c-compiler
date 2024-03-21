@@ -188,7 +188,7 @@ conditional_expression
 
 assignment_expression
 	: conditional_expression { $$ = $1;}
-	| unary_expression assignment_operator assignment_expression // { $$ = VariableDeclarator($1, $3); }
+	| unary_expression assignment_operator assignment_expression  { $$ = new VariableAssignExpression($1, $3); }
 	;
 
 assignment_operator
@@ -211,11 +211,11 @@ expression
 	;
 
 constant_expression
-	: conditional_expression
+	: conditional_expression { $$ = $1; }
 	;
 
 declaration
-	: declaration_specifiers ';'
+	: declaration_specifiers ';' { $$ = $1; }
 	| declaration_specifiers init_declarator_list ';'
 	;
 
@@ -232,7 +232,7 @@ init_declarator_list
 	;
 
 init_declarator
-	: declarator { $$ = $1; }
+	: declarator { $$ = new VariableDeclarator($1,nullptr); }
 	| declarator '=' initializer {
 		$$ = new VariableDeclarator($1,$3);
 	}
