@@ -37,7 +37,7 @@ public:
             return variableIndex->second;
         }
         else{
-            return "";  // Return an empty string
+            return "float";  // Return an empty string
         }
     }
 
