@@ -112,7 +112,7 @@ public:
         leftValue->EmitRISC(stream, context, leftRegister);
         rightValue->EmitRISC(stream, context, rightRegister);
 
-        stream<<"div "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(leftRegister)<<", "<<context.getRegisterName(rightRegister)<<std::endl;
+        stream<<"div "<<context.getRegisterName(destReg)<<", "<<context.getRegisterName(rightRegister)<<", "<<context.getRegisterName(leftRegister)<<std::endl;
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
     }
@@ -206,15 +206,19 @@ public:
     }
 
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
-            int leftRegister = context.findFreeRegister();
+        int leftRegister = context.findFreeRegister();
         int rightRegister = context.findFreeRegister();
-
+        int tempreg = context.findFreeRegister();
         branches[0]->EmitRISC(stream, context, leftRegister);
         branches[1]->EmitRISC(stream, context, rightRegister);
-        stream << "slt " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
-        stream << "xori " << context.getRegisterName(destReg) << ", " << context.getRegisterName(destReg) << ", 1" << std::endl;
+        stream << "slt " << context.getRegisterName(tempreg) << ", " << context.getRegisterName(leftRegister) << ", " << context.getRegisterName(rightRegister) << std::endl;
+        stream << "xori " << context.getRegisterName(tempreg) << ", " << context.getRegisterName(tempreg) << ", 1" << std::endl;
+        stream << "sub " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        stream << "seqz " << context.getRegisterName(destReg) << ", " << context.getRegisterName(destReg) << std::endl;
+        stream << "or " << context.getRegisterName(destReg)<< ", "<< context.getRegisterName(destReg) << ", " <<context.getRegisterName(tempreg)<<std::endl;
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
+        context.freeRegister(tempreg);
     }
     void Print(std::ostream &stream) const {
         branches[0]->Print(stream);
@@ -278,15 +282,19 @@ public:
     }
 
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
-            int leftRegister = context.findFreeRegister();
+        int leftRegister = context.findFreeRegister();
         int rightRegister = context.findFreeRegister();
-
+        int tempreg = context.findFreeRegister();
         branches[0]->EmitRISC(stream, context, leftRegister);
         branches[1]->EmitRISC(stream, context, rightRegister);
-        stream << "sgt " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
-        stream << "xori " << context.getRegisterName(destReg) << ", " << context.getRegisterName(destReg) << ", 1" << std::endl;
+        stream << "slt " << context.getRegisterName(tempreg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        stream << "xori " << context.getRegisterName(tempreg) << ", " << context.getRegisterName(tempreg) << ", 1" << std::endl;
+        stream << "sub " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        stream << "seqz " << context.getRegisterName(destReg) << ", " << context.getRegisterName(destReg) << std::endl;
+        stream << "or " << context.getRegisterName(destReg)<< ", "<< context.getRegisterName(destReg) << ", " <<context.getRegisterName(tempreg)<<std::endl;
         context.freeRegister(leftRegister);
         context.freeRegister(rightRegister);
+        context.freeRegister(tempreg);
     }
     void Print(std::ostream &stream) const {
         branches[0]->Print(stream);
@@ -355,6 +363,38 @@ public:
     void Print(std::ostream &stream) const {
         branches[0]->Print(stream);
         stream << " | ";
+        branches[1]->Print(stream);
+    }
+};
+
+class BitwiseXOR : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    BitwiseXOR(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~BitwiseXOR(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+        stream << "xor " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " ^ ";
         branches[1]->Print(stream);
     }
 };

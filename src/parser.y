@@ -163,7 +163,7 @@ and_expression
 
 exclusive_or_expression
 	: and_expression { $$ = $1; }
-	| exclusive_or_expression '^' and_expression
+	| exclusive_or_expression '^' and_expression {$$ = new BitwiseXOR($1, $3);}
 	;
 
 inclusive_or_expression
