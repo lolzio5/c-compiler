@@ -20,7 +20,7 @@ public:
     };
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
         stream << ".text" << std::endl;
-        stream << ".globl f"<< std::endl;
+        stream << ".global f"<< std::endl;
 
         declarator_->EmitRISC(stream, context, destReg);
 
@@ -108,8 +108,7 @@ public:
 
         std::string variableName = declarator->GetIdentifier();
         int variableAddress = context.bindVariable(variableName);
-        int parameterRegister = context.findFreeRegister();
-
+        int parameterRegister = context.findFreeParamRegister();
         stream<<"sw "<<context.getRegisterName(parameterRegister)<<", "<<variableAddress<<"(s0)"<<std::endl;
     }
     void Print(std::ostream &stream) const {

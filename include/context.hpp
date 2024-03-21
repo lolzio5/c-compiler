@@ -20,7 +20,7 @@ private:
         1, //x4 i = 4, thread pointer tp
         0, 0, 0,  //t0-t2 i= 5-7, temporary registers
         1, 1,  //s0-s1 i = 8-9, saved registers
-        1, //a0 i=10, return result
+        0, //a0 i=10, return result
         0, 0, 0, 0, 0, 0, 0, //a1-a7 i = 11-17, argument registers
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, //s2-s11 i = 18-27, saved registers
         0, 0, 0, 0, //t3-t6 i = 28-31, temporary registers
