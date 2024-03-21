@@ -173,4 +173,351 @@ public:
     }
 };
 
-#endif
+class LessThan : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    LessThan(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~LessThan(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+
+        stream << "slt " <<context.getRegisterName(destReg)<< context.getRegisterName(leftRegister) << ", " << context.getRegisterName(rightRegister) << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " < ";
+        branches[1]->Print(stream);
+    }
+};
+
+
+class LessThanEqual : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    LessThanEqual(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~LessThanEqual(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+            int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+        
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+        stream << "slt " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        stream << "xori " << context.getRegisterName(destReg) << ", " << context.getRegisterName(destReg) << ", 1" << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " <= ";
+        branches[1]->Print(stream);
+    }
+};
+
+
+
+class GreaterThan : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    GreaterThan(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~GreaterThan(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+
+        stream << "sgt " <<context.getRegisterName(destReg)<< context.getRegisterName(leftRegister) << ", " << context.getRegisterName(rightRegister) << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " > ";
+        branches[1]->Print(stream);
+    }
+};
+
+
+class GreaterThanEqual : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    GreaterThanEqual(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~GreaterThanEqual(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+            int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+        
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+        stream << "sgt " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        stream << "xori " << context.getRegisterName(destReg) << ", " << context.getRegisterName(destReg) << ", 1" << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " >= ";
+        branches[1]->Print(stream);
+    }
+};
+
+
+
+
+class LessThanEqual : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    LessThanEqual(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~LessThanEqual(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+            int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+        
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+        stream << "slt " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        stream << "xori " << context.getRegisterName(destReg) << ", " << context.getRegisterName(destReg) << ", 1" << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " <= ";
+        branches[1]->Print(stream);
+    }
+};
+
+
+
+class GreaterThan : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    GreaterThan(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~GreaterThan(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+
+        stream << "sgt " <<context.getRegisterName(destReg)<< context.getRegisterName(leftRegister) << ", " << context.getRegisterName(rightRegister) << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " > ";
+        branches[1]->Print(stream);
+    }
+};
+
+
+class BitwiseAnd : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    BitwiseAnd(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~BitwiseAnd(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+        
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+        stream << "and " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " & ";
+        branches[1]->Print(stream);
+    }
+};
+
+
+class BitwiseAnd : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    BitwiseAnd(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~BitwiseAnd(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+        
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+        stream << "and " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " & ";
+        branches[1]->Print(stream);
+    }
+};
+
+class BitwiseOr : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    BitwiseOr(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~BitwiseOr(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+        
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+        stream << "or " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " | ";
+        branches[1]->Print(stream);
+    }
+};
+
+class Equal : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    Equal(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~Equal(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+        
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+        stream << "sub " << context.getRegisterName(destReg) << ", " << context.getRegisterName(rightRegister) << ", " << context.getRegisterName(leftRegister) << std::endl;
+        steam << "seqz " << context.getRegisterName(destReg) << ", " << context.getRegisterName(destReg) << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " == ";
+        branches[1]->Print(stream);
+    }
+};
+
