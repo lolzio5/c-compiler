@@ -63,6 +63,8 @@ public:
     }
 };
 
+
+
 class MulOperation : public Node
 {
 private:
@@ -92,6 +94,109 @@ public:
         rightValue->Print(stream);
     }
 };
+
+
+class LogicalAnd : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    LogicalAnd(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {}
+    ~LogicalAnd(){
+        delete leftValue;
+        delete rightValue;
+    }
+
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        // Generate labels for the short-circuit evaluation
+        std::string trueLabel = context.nameNewBranch();
+        std::string falseLabel = context.nameNewBranch();
+        std::string endLabel = context.nameNewBranch();
+
+        // Evaluate the left operand
+        leftValue->EmitRISC(stream, context, destReg);
+
+        // If the left operand is false, short-circuit and jump to the false label
+        stream << "beqz " << context.getRegisterName(destReg) << ", " << falseLabel << std::endl;
+
+        // Evaluate the right operand if the left operand is true
+        rightValue->EmitRISC(stream, context, destReg);
+
+        // If the right operand is true, jump to the true label
+        stream << "bnez " << context.getRegisterName(destReg) << ", " << trueLabel << std::endl;
+
+        // False label: set the destination register to false
+        stream << falseLabel << ":" << std::endl;
+        stream << "li " << context.getRegisterName(destReg) << ", 0" << std::endl;
+        stream << "j " << endLabel << std::endl;
+
+        // True label: set the destination register to true
+        stream << trueLabel << ":" << std::endl;
+        stream << "li " << context.getRegisterName(destReg) << ", 1" << std::endl;
+
+        // End label
+        stream << endLabel << ":" << std::endl;
+    }
+    void Print(std::ostream &stream) const {
+        leftValue->Print(stream);
+        stream<<" && ";
+        rightValue->Print(stream);
+    }
+};
+
+class LogicalOr : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    LogicalOr(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {}
+    ~LogicalOr(){
+        delete leftValue;
+        delete rightValue;
+    }
+
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        // Generate labels for the short-circuit evaluation
+        std::string trueLabel = context.nameNewBranch();
+        std::string falseLabel = context.nameNewBranch();
+        std::string endLabel = context.nameNewBranch();
+
+        // Evaluate the left operand
+        leftValue->EmitRISC(stream, context, destReg);
+
+        // If the left operand is true, short-circuit and jump to the true label
+        stream << "bnez " << context.getRegisterName(destReg) << ", " << trueLabel << std::endl;
+
+        // Evaluate the right operand if the left operand is false
+        rightValue->EmitRISC(stream, context, destReg);
+
+        // If the right operand is true, jump to the true label
+        stream << "bnez " << context.getRegisterName(destReg) << ", " << trueLabel << std::endl;
+
+        // False label: set the destination register to false
+        stream << falseLabel << ":" << std::endl;
+        stream << "li " << context.getRegisterName(destReg) << ", 0" << std::endl;
+        stream << "j " << endLabel << std::endl;
+
+        // True label: set the destination register to true
+        stream << trueLabel << ":" << std::endl;
+        stream << "li " << context.getRegisterName(destReg) << ", 1" << std::endl;
+
+        // End label
+        stream << endLabel << ":" << std::endl;
+    }
+    void Print(std::ostream &stream) const {
+        leftValue->Print(stream);
+        stream<<" || ";
+        rightValue->Print(stream);
+    }
+};
+
+
 
 class DivOperation : public Node
 {
@@ -503,5 +608,37 @@ public:
     }
 };
 
+class ShiftRight : public Node
+{
+private:
+    Node* leftValue;
+    Node* rightValue;
+public:
+    ShiftRight(Node* leftValue_, Node* rightValue_) : leftValue(leftValue_), rightValue(rightValue_) {
+        branches.push_back(leftValue);
+        branches.push_back(rightValue);
+    }
+    ~ShiftRight(){
+        for (auto branch : branches){
+            delete branch;
+        }
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        int leftRegister = context.findFreeRegister();
+        int rightRegister = context.findFreeRegister();
+        
+        branches[0]->EmitRISC(stream, context, leftRegister);
+        branches[1]->EmitRISC(stream, context, rightRegister);
+        stream << "slr " << context.getRegisterName(destReg) << ", " << context.getRegisterName(leftRegister) << ", " << context.getRegisterName(rightRegister) << std::endl;
+        context.freeRegister(leftRegister);
+        context.freeRegister(rightRegister);
+    }
+    void Print(std::ostream &stream) const {
+        branches[0]->Print(stream);
+        stream << " << ";
+        branches[1]->Print(stream);
+    }
+};
 
 #endif

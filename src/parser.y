@@ -138,8 +138,8 @@ additive_expression
 
 shift_expression
 	: additive_expression { $$ = $1; }
-	| shift_expression LEFT_OP additive_expression 
-	| shift_expression RIGHT_OP additive_expression 
+	| shift_expression LEFT_OP additive_expression { $$ = new ShiftLeft($1, $3); }
+	| shift_expression RIGHT_OP additive_expression { $$ = new ShiftRight($1, $3); }
 	;
 
 relational_expression
@@ -173,13 +173,14 @@ inclusive_or_expression
 
 logical_and_expression
 	: inclusive_or_expression { $$ = $1; }
-	|  AND_OP inclusive_or_expression
+	| logical_and_expression AND_OP inclusive_or_expression { $$ = new LogicalAnd($1, $3); }
 	;
 
 logical_or_expression
 	: logical_and_expression { $$ = $1; }
-	| logical_or_expression OR_OP logical_and_expression
+	| logical_or_expression OR_OP logical_and_expression { $$ = new LogicalOr($1, $3); }
 	;
+
 
 conditional_expression
 	: logical_or_expression { $$ = $1; }
@@ -453,8 +454,8 @@ selection_statement
 iteration_statement
 	: WHILE '(' expression ')' statement { $$ = new WhileLoop($3, $5); }
 	| DO statement WHILE '(' expression ')' ';'
-	| FOR '(' expression_statement expression_statement ')' statement
-	| FOR '(' expression_statement expression_statement expression ')' statement
+	| FOR '(' expression_statement expression_statement ')' statement 
+	| FOR '(' expression_statement expression_statement expression ')' statement { $$ = new ForLoop($3, $4, $5, $7);}
 	;
 
 jump_statement
