@@ -15,6 +15,8 @@ private:
 
     std::vector<std::string> declaredFunctions; // Functions that have been declared (and can be called)
 
+    bool functionCalled=false;
+
     int usedRegisters[32] = {
         1, //x0 i = 0, reg zero
         1, //x1 i = 1, return address ra
@@ -41,6 +43,19 @@ public:
         else{
             return "float";  // Return an empty string
         }
+    }
+
+    // track function calls
+    void callFunction(){
+        functionCalled=true;
+    }
+
+    bool isFunctionCalled(){
+        return functionCalled;
+    }
+
+    void uncallFunction(){
+        functionCalled=false;
     }
 
     std::string nameNewBranch(){

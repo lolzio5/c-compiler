@@ -54,16 +54,16 @@ public:
         std::string variableName = declarator->GetIdentifier();
         int currentStackLocation = context.bindVariable(variableName, variableType);
         if(variableType=="float"){
-            stream<<"fsw f"<<context.getRegisterName(destReg)<<", " <<currentStackLocation<<"(s0)"<<std::endl;
+            stream<<"fsw f"<<context.getRegisterName(destReg)<<", " <<currentStackLocation<<"(sp)"<<std::endl;
         }
         else if(variableType=="double"){
-            stream<<"fsd f"<<context.getRegisterName(destReg)<<", " <<currentStackLocation<<"(s0)"<<std::endl;
+            stream<<"fsd f"<<context.getRegisterName(destReg)<<", " <<currentStackLocation<<"(sp)"<<std::endl;
         }
         else if(variableType=="int"){
-            stream<<"sw "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+            stream<<"sw "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(sp)"<<std::endl;
         }
         else if(variableType=="char"){
-            stream<<"sb "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+            stream<<"sb "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(sp)"<<std::endl;
         }
     }
     void Print(std::ostream &stream) const {

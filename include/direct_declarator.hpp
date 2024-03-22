@@ -18,11 +18,16 @@ public:
         if(identifier_!=nullptr){
             std::string functionName=identifier_->GetIdentifier();
             if(context.isFunctionDeclared(functionName)==true){
+                context.callFunction();
+                stream<<"addi sp,sp,-16"<<std::endl;
+                stream<<"sw ra,12(sp)"<<std::endl;
+                stream<<"sw s0,8(sp)"<<std::endl;
+                stream<<"addi s0,sp,16"<<std::endl;
                 stream<<"call "<<functionName<<std::endl;
             }
             else{
                 context.declareFunction(functionName);
-                stream << ".global ";
+                stream << ".globl ";
                 identifier_->EmitRISC(stream, context, destReg);
                 stream<<std::endl;
                 identifier_->EmitRISC(stream, context, destReg);

@@ -36,16 +36,16 @@ public:
         if (currentStackLocation!=-1){
             std::string variableType=context.getVariableType(identifier_);
             if(variableType=="double"){
-                stream<<"fld f"<<context.getRegisterName(destReg)<<", "<<currentStackLocation<< "(s0)"<<std::endl;
+                stream<<"fld f"<<context.getRegisterName(destReg)<<", "<<currentStackLocation<< "(sp)"<<std::endl;
             }
             else if (variableType=="float"){
-                stream<<"flw f"<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+                stream<<"flw f"<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(sp)"<<std::endl;
             }
             else if(variableType=="char"){
-                stream<<"lb "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+                stream<<"lb "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(sp)"<<std::endl;
             }
             else {
-                stream<<"lw "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+                stream<<"lw "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(sp)"<<std::endl;
             }
         }
     }

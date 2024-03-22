@@ -82,11 +82,16 @@ public:
         std::string functionName=declarator->GetIdentifier();
         if(context.isFunctionDeclared(functionName)){
             parameters->EmitRISC(stream, context, destReg);
+            context.callFunction();
+            stream<<"addi sp,sp,-16"<<std::endl;
+            stream<<"sw ra,12(sp)"<<std::endl;
+            stream<<"sw s0,8(sp)"<<std::endl;
+            stream<<"addi s0,sp,16"<<std::endl;
             stream<<"call "<<functionName<<std::endl;
         }
         else{
             context.declareFunction(functionName);
-            stream << ".global ";
+            stream << ".globl ";
             declarator->EmitRISC(stream, context, destReg);
             stream<<std::endl;
             declarator->EmitRISC(stream, context, destReg);
@@ -151,13 +156,13 @@ public:
         int parameterRegister = context.findFreeParamRegister();
 
         if(variableType=="float"){
-            stream<<"fsw f"<<context.getRegisterName(parameterRegister)<<", " <<variableAddress<<"(s0)"<<std::endl;
+            stream<<"fsw f"<<context.getRegisterName(parameterRegister)<<", " <<variableAddress<<"(sp)"<<std::endl;
         }
         else if (variableType=="double"){
-            stream<<"fsd f"<<context.getRegisterName(parameterRegister)<<", " <<variableAddress<<"(s0)"<<std::endl;
+            stream<<"fsd f"<<context.getRegisterName(parameterRegister)<<", " <<variableAddress<<"(sp)"<<std::endl;
         }
         else{
-             stream<<"sw "<<context.getRegisterName(parameterRegister)<<", "<<variableAddress<<"(s0)"<<std::endl;
+             stream<<"sw "<<context.getRegisterName(parameterRegister)<<", "<<variableAddress<<"(sp)"<<std::endl;
         }
     }
     void Print(std::ostream &stream) const {
