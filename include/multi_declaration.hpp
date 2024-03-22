@@ -18,12 +18,16 @@ public:
     }
 
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const{
+        if(declarator!=nullptr){
+            declarator->EmitRISC(stream, context, destReg);
+        }
         specifier->EmitRISC(stream, context, destReg);
-        declarator->EmitRISC(stream, context, destReg);
     }
     void Print(std::ostream &stream) const {
         specifier->Print(stream);
-        declarator->Print(stream);
+        if(declarator!=nullptr){
+            declarator->Print(stream);
+        }
     }
 };
 

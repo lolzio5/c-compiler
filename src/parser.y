@@ -80,9 +80,13 @@ primary_expression
 	| INT_CONSTANT {
 		$$ = new IntConstant($1);
 	}
-    | FLOAT_CONSTANT
-	| STRING_LITERAL
-	| '(' expression ')'
+    | FLOAT_CONSTANT {
+		$$ = new FloatConstant($1);
+	}
+	| STRING_LITERAL {
+		$$ = new StringConstant($1);
+	}
+	| '(' expression ')' { $$ = $2; }
 	;
 
 postfix_expression
@@ -106,7 +110,7 @@ unary_expression
 	| INC_OP unary_expression
 	| DEC_OP unary_expression
 	| unary_operator cast_expression
-	| SIZEOF unary_expression
+	| SIZEOF unary_expression { $$ = new SizeOf($2); }
 	| SIZEOF '(' type_name ')'
 	;
 
@@ -229,7 +233,7 @@ declaration_specifiers
 	;
 
 init_declarator_list
-	: init_declarator //{ $$ = new NodeList($1); }
+	: init_declarator { $$ = $1; }
 	| init_declarator_list ',' init_declarator //{ $1->PushBack($3); $$=$1; }
 	;
 
