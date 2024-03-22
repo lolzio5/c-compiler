@@ -31,13 +31,13 @@
 %type <node> translation_unit function_definition primary_expression postfix_expression
 %type <node> unary_expression cast_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
-%type <node> conditional_expression assignment_expression expression constant_expression declaration declaration_specifiers init_declarator_list
+%type <node> conditional_expression assignment_expression expression constant_expression declaration declaration_specifiers
 %type <node> init_declarator type_specifier struct_specifier struct_declaration_list struct_declaration specifier_qualifier_list struct_declarator_list
 %type <node> struct_declarator enum_specifier enumerator_list enumerator declarator direct_declarator pointer parameter_list parameter_declaration
 %type <node> identifier_list type_name abstract_declarator direct_abstract_declarator initializer initializer_list statement labeled_statement
-%type <node> compound_statement declaration_list expression_statement selection_statement iteration_statement jump_statement
+%type <node> compound_statement expression_statement selection_statement iteration_statement jump_statement
 
-%type <nodes> statement_list external_declaration argument_expression_list
+%type <nodes> statement_list external_declaration argument_expression_list init_declarator_list declaration_list
 
 %type <string> unary_operator assignment_operator storage_class_specifier
 
@@ -196,7 +196,17 @@ conditional_expression
 
 assignment_expression
 	: conditional_expression { $$ = $1; }
-	| unary_expression assignment_operator assignment_expression  { $$ = new VariableAssignExpression($1, $3); }
+	| unary_expression '=' assignment_expression  { $$ = new VariableAssignExpression($1, $3); }
+	| unary_expression ADD_ASSIGN assignment_expression { $$ = new VariableAssignExpression($1, new AddOperation($1, $3)); }
+	| unary_expression SUB_ASSIGN assignment_expression { $$ = new VariableAssignExpression($1, new SubOperation($1, $3)); }
+	| unary_expression MUL_ASSIGN assignment_expression { $$ = new VariableAssignExpression($1, new MulOperation($1, $3)); }
+	| unary_expression DIV_ASSIGN assignment_expression { $$ = new VariableAssignExpression($1, new DivOperation($1, $3)); }
+	| unary_expression MOD_ASSIGN assignment_expression { $$ = new VariableAssignExpression($1, new ModuloOperation($1, $3)); }
+	| unary_expression LEFT_ASSIGN assignment_expression { $$ = new VariableAssignExpression($1, new ShiftLeft($1, $3)); }
+	| unary_expression RIGHT_ASSIGN assignment_expression { $$ = new VariableAssignExpression($1, new ShiftRight($1, $3)); }
+	| unary_expression AND_ASSIGN assignment_expression { $$ = new VariableAssignExpression($1, new BitwiseAnd($1, $3)); }
+	| unary_expression OR_ASSIGN assignment_expression { $$ = new VariableAssignExpression($1, new BitwiseOr($1, $3)); }
+	| unary_expression XOR_ASSIGN assignment_expression { $$ = new VariableAssignExpression($1, new BitwiseXOR($1, $3)); }
 	;
 
 assignment_operator
@@ -235,8 +245,8 @@ declaration_specifiers
 	;
 
 init_declarator_list
-	: init_declarator { $$ = $1; }
-	| init_declarator_list ',' init_declarator //{ $1->PushBack($3); $$=$1; }
+	: init_declarator { $$ = new NodeList($1); }
+	| init_declarator_list ',' init_declarator { $1->PushBack($3); $$=$1; }
 	;
 
 init_declarator
@@ -440,8 +450,8 @@ compound_statement
 	;
 
 declaration_list
-	: declaration { $$ = $1; }
-	| declaration_list declaration
+	: declaration { $$ = new NodeList($1); }
+	| declaration_list declaration { $1->PushBack($2); $$=$1; }
 	;
 
 statement_list
