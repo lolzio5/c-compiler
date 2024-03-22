@@ -15,31 +15,16 @@ public:
         delete statement;
     }
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
-        // Generate labels for the loop start and end
         std::string loopStartLabel = context.nameNewBranch();
         std::string loopEndLabel = context.nameNewBranch();
-
-        // Emit label for the loop start
         stream << loopStartLabel << ":" << std::endl;
-
-        // Evaluate the condition expression
         int conditionValueRegister = context.findFreeRegister();
-        condition->EmitRISC(stream, context, conditionValueRegister);
-
-        // Branch to the end of the loop if the condition is false
         stream << "beq " << context.getRegisterName(conditionValueRegister) << ", zero, " << loopEndLabel << std::endl;
-
-        // Emit code for the loop body
         if(statement!=nullptr){
             statement->EmitRISC(stream, context, destReg);
-            // Unconditionally jump back to the start of the loop
             stream << "j " << loopStartLabel << std::endl;
         }
-
-        // Emit label for the end of the loop
         stream << loopEndLabel << ":" << std::endl;
-
-        // Free the register used for the condition evaluation
         context.freeRegister(conditionValueRegister);
     }
 
@@ -133,38 +118,33 @@ public:
         context.freeRegister(conditionValueRegister);
     }
     void Print(std::ostream &stream) const {
-        stream<<"if(";
-        condition->Print(stream);
-        stream<<"){";
-        statement->Print(stream);
-        stream<<"}"<<std::endl;
     }
 };
 
 class SwitchStatement : public Node
 {
 private:
-    Node* condition;
-    Node* statement;
+    Node* expression;
+    Node* statements;
 
 public:
-    SwitchStatement(Node* condition_, Node* statement_) : condition(condition_), statement(statement_) {}
+    SwitchStatement(Node* expression_, Node* statements_) : expression(expression_), statements(statements_) {}
     ~SwitchStatement() {
-        delete condition;
-        delete statement;
+        delete expression;
+        delete statements;
     }
 
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
-        
     }
 
     void Print(std::ostream &stream) const {
         stream << "switch (";
-        condition->Print(stream);
+        expression->Print(stream);
         stream << ") ";
-        statement->Print(stream);
+        statements->Print(stream);
     }
 };
+
 
 
 
