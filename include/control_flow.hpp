@@ -141,6 +141,33 @@ public:
     }
 };
 
+class SwitchStatement : public Node
+{
+private:
+    Node* condition;
+    Node* statement;
+
+public:
+    SwitchStatement(Node* condition_, Node* statement_) : condition(condition_), statement(statement_) {}
+    ~SwitchStatement() {
+        delete condition;
+        delete statement;
+    }
+
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        
+    }
+
+    void Print(std::ostream &stream) const {
+        stream << "switch (";
+        condition->Print(stream);
+        stream << ") ";
+        statement->Print(stream);
+    }
+};
+
+
+
 class IfElseStatement : public Node
 {
 private:
