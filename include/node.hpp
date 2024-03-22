@@ -26,6 +26,9 @@ public:
     virtual std::string GetType() const {
         std::cerr<<"Type Error"<<std::endl;
     }
+    virtual int GetSize() const{
+        std::cerr<<"Size Error"<<std::endl;
+    }
 };
 
 class NodeList : public Node
@@ -65,6 +68,10 @@ public:
             }
             node->Print(stream);
         }
+    }
+
+    int getSize() const {
+        return nodes.size();
     }
 };
 
