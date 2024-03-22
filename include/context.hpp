@@ -17,6 +17,8 @@ private:
 
     bool functionCalled=false;
 
+    std::vector<int> paramRegisters;
+
     int usedRegisters[32] = {
         1, //x0 i = 0, reg zero
         1, //x1 i = 1, return address ra
@@ -56,6 +58,14 @@ public:
 
     void uncallFunction(){
         functionCalled=false;
+    }
+
+    void addParamRegister(int paramRegister){
+        paramRegisters.push_back(paramRegister);
+    }
+
+    std::vector<int> getParamRegisters(){
+        return paramRegisters;
     }
 
     std::string nameNewBranch(){
