@@ -41,7 +41,10 @@ public:
             else if (variableType=="float"){
                 stream<<"flw f"<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
             }
-            else{
+            else if(variableType=="char"){
+                stream<<"lb "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+            }
+            else {
                 stream<<"lw "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
             }
         }

@@ -110,8 +110,8 @@ unary_expression
 	| INC_OP unary_expression
 	| DEC_OP unary_expression
 	| unary_operator cast_expression
-	| SIZEOF unary_expression { $$ = new SizeOf($2); }
-	| SIZEOF '(' type_name ')'
+	| SIZEOF unary_expression { $$ = new SizeOfVariable($2); }
+	| SIZEOF '(' type_name ')' { $$ = new SizeOfType($3); }
 	;
 
 unary_operator
@@ -221,7 +221,7 @@ constant_expression
 	;
 
 declaration
-	: declaration_specifiers ';'// { $$ = $1; }
+	: declaration_specifiers ';'
 	| declaration_specifiers init_declarator_list ';' { $$ = new MultiDeclarator($1, $2); }
 	;
 
@@ -274,8 +274,12 @@ type_specifier
 	| DOUBLE {
 		$$ = new TypeSpecifier("double");
 	}
-	| SIGNED
-	| UNSIGNED
+	| SIGNED {
+		$$ = new TypeSpecifier("signed");
+	}
+	| UNSIGNED {
+		$$ = new TypeSpecifier("unsigned");
+	}
   	| struct_specifier
 	| enum_specifier
 	| TYPE_NAME
@@ -298,7 +302,7 @@ struct_declaration
 
 specifier_qualifier_list
 	: type_specifier specifier_qualifier_list
-	| type_specifier
+	| type_specifier { $$ = $1; }
 	;
 
 struct_declarator_list
@@ -370,7 +374,7 @@ identifier_list
 	;
 
 type_name
-	: specifier_qualifier_list
+	: specifier_qualifier_list { $$ = $1; }
 	| specifier_qualifier_list abstract_declarator
 	;
 
@@ -474,8 +478,6 @@ jump_statement
 		$$ = new ReturnStatement($2);
 	}
 	;
-
-
 
 %%
 

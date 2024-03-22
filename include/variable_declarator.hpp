@@ -78,6 +78,9 @@ public:
         else if(variableType=="double"){
             stream<<"fsd f"<<context.getRegisterName(destReg)<<", " <<currentStackLocation<<"(s0)"<<std::endl;
         }
+        else if(variableType=="char"){
+            stream<<"sb "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
+        }
         else{
             stream<<"sw "<<context.getRegisterName(destReg)<<", "<<currentStackLocation<<"(s0)"<<std::endl;
         }

@@ -20,13 +20,13 @@ public:
     }
 };
 
-class SizeOf : public Node
+class SizeOfVariable : public Node
 {
 private:
     Node* expression;
 public:
-    SizeOf(Node* expression_) : expression(expression_){};
-    ~SizeOf(){};
+    SizeOfVariable(Node* expression_) : expression(expression_){};
+    ~SizeOfVariable(){};
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
         std::string variableType = context.getVariableType(expression->GetIdentifier());
         int variableSize;
@@ -60,6 +60,47 @@ public:
         stream << "sizeof(";
         expression->Print(stream);
         stream<<");"<<std::endl;
+    }
+};
+
+class SizeOfType : public Node
+{
+private:
+    Node* type_name;
+public:
+    SizeOfType(Node* type_name_) : type_name(type_name_){};
+    ~SizeOfType(){};
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        std::string typeName = type_name->GetType();
+        int variableSize;
+        if (typeName=="int"){
+            variableSize=4;
+        }
+        else if (typeName=="float"){
+            variableSize=4;
+        }
+        else if (typeName=="double"){
+            variableSize=8;
+        }
+        else if (typeName=="char"){
+            variableSize=1;
+        }
+        else if (typeName=="short"){
+            variableSize=2;
+        }
+        else if (typeName=="long"){
+            variableSize=4;
+        }
+        else if (typeName=="void"){
+            variableSize=0;
+        }
+        else if (typeName=="char"){
+            variableSize=1;
+        }
+        stream << "li " << context.getRegisterName(destReg) << ", " << variableSize << std::endl;
+    }
+    void Print(std::ostream &stream) const {
+        stream << "sizeof("<<type_name<<");"<<std::endl;
     }
 };
 
