@@ -455,7 +455,7 @@ selection_statement
 iteration_statement
 	: WHILE '(' expression ')' statement { $$ = new WhileLoop($3, $5); }
 	| DO statement WHILE '(' expression ')' ';'
-	| FOR '(' expression_statement expression_statement ')' statement 
+	| FOR '(' expression_statement expression_statement ')' statement
 	| FOR '(' expression_statement expression_statement expression ')' statement { $$ = new ForLoop($3, $4, $5, $7);}
 	;
 
