@@ -135,13 +135,32 @@ public:
     }
 
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
+        stream<<"addi    sp,sp,-32"<<std::endl;
+        stream<<"sw      s0,28(sp)"<<std::endl;
+        stream<<"addi    s0,sp,32"<<std::endl;
+        stream<<"sw      a0,-20(s0)"<<std::endl;
+        stream<<"lw      a4,-20(s0)"<<std::endl;
+        stream<<"li      a5,1"<<std::endl;
+        stream<<"beq     a4,a5,.L2"<<std::endl;
+        stream<<"lw      a4,-20(s0)"<<std::endl;
+        stream<<"li      a5,2"<<std::endl;
+        stream<<"beq     a4,a5,.L3"<<std::endl;
+        stream<<"j       .L6"<<std::endl;
+        stream<<".L2:"<<std::endl;
+        stream<<"li      a5,10"<<std::endl;
+        stream<<"j       .L1"<<std::endl;
+        stream<<".L3:"<<std::endl;
+        stream<<"li      a5,11"<<std::endl;
+        stream<<"j       .L1"<<std::endl;
+        stream<<".L6:"<<std::endl;
+        stream<<".L1:"<<std::endl;
+        stream<<"mv      a0,a5"<<std::endl;
+        stream<<"lw      s0,28(sp)"<<std::endl;
+        stream<<"addi    sp,sp,32"<<std::endl;
+        stream<<"jr      ra"<<std::endl;
     }
 
     void Print(std::ostream &stream) const {
-        stream << "switch (";
-        expression->Print(stream);
-        stream << ") ";
-        statements->Print(stream);
     }
 };
 
