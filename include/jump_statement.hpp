@@ -25,6 +25,7 @@ public:
             stream<<"lw s0, 8(sp)"<<std::endl;
             stream<<"addi sp, sp, 16"<<std::endl;
         }
+        stream<<"lw      s0,28(sp)"<<std::endl;
         stream << "jr ra" << std::endl;
     }
     void Print(std::ostream &stream) const {
