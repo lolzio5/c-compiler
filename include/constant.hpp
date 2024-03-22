@@ -2,7 +2,6 @@
 #define CONSTANT_HPP
 
 #include "node.hpp"
-
 class IntConstant : public Node
 {
 private:

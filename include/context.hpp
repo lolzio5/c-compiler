@@ -13,6 +13,8 @@ private:
     std::map<std::string, int> variableStackAddresses; // Variable name binding to stack location
     std::map<std::string, std::string> variableTypes; // Variable name binding to type
 
+    std::vector<std::string> declaredFunctions; // Functions that have been declared (and can be called)
+
     int usedRegisters[32] = {
         1, //x0 i = 0, reg zero
         1, //x1 i = 1, return address ra
@@ -46,6 +48,20 @@ public:
        x++;
        return "L" + std::to_string(x);
     }
+    // Declare a new function
+    void declareFunction(std::string functionName){
+        declaredFunctions.push_back(functionName);
+    }
+
+    bool isFunctionDeclared(std::string functionName){
+        auto functionIndex = std::find(declaredFunctions.begin(), declaredFunctions.end(), functionName);
+        if(functionIndex==declaredFunctions.end()){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
 
     // Add and find variables
     int bindVariable(std::string variableName, std::string variableType){
@@ -60,7 +76,7 @@ public:
             return variableIndex->second;
         }
         else{
-            return -1;  // Return a value outside of the stack to be determined
+            return -1;  // Return a value outside of the stack
         }
     }
 

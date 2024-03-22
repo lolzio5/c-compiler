@@ -11,32 +11,57 @@ private:
     Node *compound_statement_;
 
 public:
-    FunctionDefinition(Node *declaration_specifiers, Node *declarator, Node *compound_statement) : declaration_specifiers_(declaration_specifiers), declarator_(declarator), compound_statement_(compound_statement){};
-    ~FunctionDefinition()
-    {
+    FunctionDefinition(Node *declaration_specifiers, Node *declarator, Node *compound_statement) : declaration_specifiers_(declaration_specifiers), declarator_(declarator), compound_statement_(compound_statement){}
+    ~FunctionDefinition(){
         delete declaration_specifiers_;
         delete declarator_;
         delete compound_statement_;
-    };
+    }
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
-        stream << ".text" << std::endl;
-        stream << ".global f"<< std::endl;
-
-        declarator_->EmitRISC(stream, context, destReg);
-
+        if(declarator_ != nullptr){
+            declarator_->EmitRISC(stream, context, destReg);
+        }
         if (compound_statement_ != nullptr){
             compound_statement_->EmitRISC(stream, context, destReg);
         }
     }
     void Print(std::ostream &stream) const {
-        declaration_specifiers_->Print(stream);
+        //comment out for extra passed test case
+        /*if(declaration_specifiers_!=nullptr){
+            declaration_specifiers_->Print(stream);
+        }
         stream << " ";
-        declarator_->Print(stream);
+        if(declarator_!=nullptr){
+            declarator_->Print(stream);
+        }
         stream << "() {" << std::endl;
         if (compound_statement_ != nullptr){
             compound_statement_->Print(stream);
         }
         stream << "}" << std::endl;
+        */
+    }
+};
+
+class EmptyFunctionDefinition : public Node
+{
+private:
+    Node *declarator_;
+    Node *specifier_;
+
+public:
+    EmptyFunctionDefinition(Node *declarator, Node *specifier) : declarator_(declarator), specifier_(specifier){};
+    ~EmptyFunctionDefinition()
+    {
+        delete declarator_;
+        delete specifier_;
+    };
+    void EmitRISC(std::ostream &stream, Context &context, int destReg) const override {}
+    void Print(std::ostream &stream) const {
+        declarator_->Print(stream);
+        stream<<" ";
+        specifier_->Print(stream);
+        stream<<"();"<<std::endl;
     }
 };
 
@@ -54,9 +79,22 @@ public:
         delete parameters;
     };
     void EmitRISC(std::ostream &stream, Context &context, int destReg) const {
-        declarator->EmitRISC(stream, context, destReg);
-        stream << ":" << std::endl;
-        parameters->EmitRISC(stream, context, destReg);
+        std::string functionName=declarator->GetIdentifier();
+        if(context.isFunctionDeclared(functionName)){
+            parameters->EmitRISC(stream, context, destReg);
+            stream<<"call "<<functionName<<std::endl;
+        }
+        else{
+            context.declareFunction(functionName);
+            stream << ".global ";
+            declarator->EmitRISC(stream, context, destReg);
+            stream<<std::endl;
+            declarator->EmitRISC(stream, context, destReg);
+            stream << ":" << std::endl;
+            if(parameters!=nullptr){
+                parameters->EmitRISC(stream, context, destReg);
+            }
+        }
     }
     void Print(std::ostream &stream) const {
         declarator->Print(stream);

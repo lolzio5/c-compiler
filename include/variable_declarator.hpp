@@ -64,8 +64,8 @@ public:
         std::string variableType;
         int currentStackLocation;
         if (context.variableLocation(variableName)==-1){
-            currentStackLocation=context.bindVariable(variableName, variableType);
             variableType="double";
+            currentStackLocation=context.bindVariable(variableName, variableType);
         }
         else{
             currentStackLocation=context.variableLocation(variableName);

@@ -28,7 +28,7 @@
 %token STRUCT UNION ENUM ELLIPSIS
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
-%type <node> translation_unit external_declaration function_definition primary_expression postfix_expression argument_expression_list
+%type <node> translation_unit function_definition primary_expression postfix_expression
 %type <node> unary_expression cast_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
 %type <node> conditional_expression assignment_expression expression constant_expression declaration declaration_specifiers init_declarator_list
@@ -37,7 +37,7 @@
 %type <node> identifier_list type_name abstract_declarator direct_abstract_declarator initializer initializer_list statement labeled_statement
 %type <node> compound_statement declaration_list expression_statement selection_statement iteration_statement jump_statement
 
-%type <nodes> statement_list
+%type <nodes> statement_list external_declaration argument_expression_list
 
 %type <string> unary_operator assignment_operator storage_class_specifier
 
@@ -58,8 +58,9 @@ translation_unit
 	;
 
 external_declaration
-	: function_definition { $$ = $1; }
-	| declaration { $$ = $1; }
+	: function_definition { $$ = new NodeList($1); }
+	| external_declaration function_definition { $1->PushBack($2); $$=$1; }
+	| declaration
 	;
 
 function_definition
@@ -69,6 +70,7 @@ function_definition
 	}
 	| declarator declaration_list compound_statement
 	| declarator compound_statement
+	| declaration_specifiers declarator ';' { $$ = new EmptyFunctionDefinition($1, $2); }
 	;
 
 
@@ -92,8 +94,8 @@ primary_expression
 postfix_expression
 	: primary_expression { $$ = $1; }
 	| postfix_expression '[' expression ']'
-	| postfix_expression '(' ')'
-	| postfix_expression '(' argument_expression_list ')'
+	| postfix_expression '(' ')' { $$ = new FunctionCall($1); }
+	| postfix_expression '(' argument_expression_list ')' { $$ = new FunctionCallWithArguments($1, $3); }
 	| postfix_expression '.' IDENTIFIER
 	| postfix_expression PTR_OP IDENTIFIER
 	| postfix_expression INC_OP
@@ -101,8 +103,8 @@ postfix_expression
 	;
 
 argument_expression_list
-	: assignment_expression { $$ = $1; }
-	| argument_expression_list ',' assignment_expression
+	: assignment_expression { $$ = new NodeList($1); }
+	| argument_expression_list ',' assignment_expression { $1->PushBack($3); $$ = $1; }
 	;
 
 unary_expression
