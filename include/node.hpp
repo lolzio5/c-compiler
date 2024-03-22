@@ -28,7 +28,6 @@ public:
     }
 };
 
-// Represents a list of nodes.
 class NodeList : public Node
 {
 private:
